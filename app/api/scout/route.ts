@@ -169,7 +169,9 @@ export async function POST(req: NextRequest) {
     const scoredCandidates = [];
     for (const candidate of toScore) {
       const scores = await scoreCandidate(candidate, requirements);
+      await new Promise(r => setTimeout(r, 500));
       const email = await generateEmail(candidate, requirements, scores);
+      await new Promise(r => setTimeout(r, 300));
       scoredCandidates.push({ ...candidate, scores, email });
     }
 
