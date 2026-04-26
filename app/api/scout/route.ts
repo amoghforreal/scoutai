@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const groq2 = new Groq({ apiKey: process.env.GROQ_API_KEY_2 || process.env.GROQ_API_KEY });
 
 async function parseJobDescription(jd: string) {
-  const res = await groq.chat.completions.create({
+  const res = await groq2.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
     messages: [
       { role: 'system', content: 'You are a technical recruiter AI. Extract structured requirements from job descriptions. Respond ONLY with valid JSON, no markdown, no explanation.' },
@@ -114,7 +115,8 @@ async function scoreCandidate(candidate: any, requirements: any) {
   const models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'gemma2-9b-it'];
   for (const model of models) {
     try {
-      const res = await groq.chat.completions.create({
+      const client = Math.random() > 0.5 ? groq2 : groq;
+      const res = await client.chat.completions.create({
         model,
         messages: [
           { role: 'system', content: 'You are a senior technical recruiter. Score GitHub developers. Respond ONLY with valid JSON, no markdown.' },
@@ -138,7 +140,7 @@ async function scoreCandidate(candidate: any, requirements: any) {
 
 async function generateEmail(candidate: any, requirements: any, scores: any) {
   try {
-    const res = await groq.chat.completions.create({
+    const res = await groq2.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: 'You are a world-class tech recruiter. Write compelling, highly personalized outreach emails. Reference the candidate\'s actual work specifically. Be genuine, concise, and human. Never use generic templates.' },
