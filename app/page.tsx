@@ -260,12 +260,12 @@ export default function Home() {
                     <div className="flex gap-2 mt-4 flex-wrap">
                       {c.scores?.strengths?.map(s => (
                         <span key={s} className="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded border border-emerald-500/20">
-                          checkmark {s}
+                          ✓ {s}
                         </span>
                       ))}
                       {c.scores?.concerns?.map(s => (
                         <span key={s} className="bg-red-500/10 text-red-400 text-xs px-2 py-0.5 rounded border border-red-500/20">
-                          warning {s}
+                          ⚠ {s}
                         </span>
                       ))}
                     </div>
@@ -275,7 +275,7 @@ export default function Home() {
                         <div key={r.name} className="bg-white/5 rounded-lg p-3 border border-white/5">
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-sm font-medium text-white/80 truncate">{r.name}</span>
-                            <span className="text-xs text-white/30 ml-2 flex-shrink-0">star {r.stars}</span>
+                            <span className="text-xs text-white/30 ml-2 flex-shrink-0">⭐ {r.stars}</span>
                           </div>
                           <p className="text-xs text-white/35 truncate">{r.description || 'No description'}</p>
                         </div>
