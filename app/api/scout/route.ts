@@ -152,11 +152,21 @@ export async function POST(req: NextRequest) {
 
     const requirements = await parseJobDescription(jobDescription);
     const rawCandidates = await searchGitHubCandidates(requirements, count, location);
-    const detailPromises = rawCandidates.slice(0, count + 15).map(u => getCandidateDetails(u.login));
+    const detailPromises = rawCandidates.slice(0, count + 20).map(u => getCandidateDetails(u.login));
     const details = (await Promise.all(detailPromises)).filter(Boolean).filter((c: any) => c.type !== 'Organization');
 
+    // Pre-filter: only candidates whose languages overlap with requirements
+    const requiredLangs = (requirements.languages || []).map((l: string) => l.toLowerCase());
+    const preFiltered = details.filter((c: any) => {
+      if (requiredLangs.length === 0) return true;
+      const candidateLangs = (c.topLanguages || []).map((l: string) => l.toLowerCase());
+      return requiredLangs.some((l: string) => candidateLangs.includes(l)) || candidateLangs.includes('javascript') || candidateLangs.includes('typescript');
+    });
+
+    // Score more than needed, then pick the best
+    const toScore = preFiltered.slice(0, Math.min(count + 8, preFiltered.length));
     const scoredCandidates = [];
-    for (const candidate of details.slice(0, count)) {
+    for (const candidate of toScore) {
       const scores = await scoreCandidate(candidate, requirements);
       const email = await generateEmail(candidate, requirements, scores);
       scoredCandidates.push({ ...candidate, scores, email });
@@ -166,7 +176,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       requirements,
-      candidates: scoredCandidates,
+      candidates: scoredCandidates.slice(0, count),
       total_searched: rawCandidates.length,
       location: location || 'Global',
     });
