@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ScoutAI — AI Talent Scouting Agent",
+  title: "ScoutAI: AI Talent Scouting Agent",
   description: "Autonomous AI agent that finds, scores, and drafts outreach for top GitHub developers.",
 };
 
