@@ -132,6 +132,18 @@ export default function Home() {
   const [filterLang, setFilterLang] = useState('');
   const [filterExp, setFilterExp] = useState('any');
 
+  const LOCATION_ALIASES: Record<string, string> = {
+    'usa': 'United States', 'us': 'United States', 'u.s.': 'United States', 'u.s.a': 'United States',
+    'america': 'United States', 'united states of america': 'United States',
+    'uk': 'United Kingdom', 'u.k.': 'United Kingdom', 'britain': 'United Kingdom', 'england': 'United Kingdom',
+    'uae': 'United Arab Emirates', 'dubai': 'United Arab Emirates',
+    'deutschland': 'Germany', 'france': 'France', 'canada': 'Canada',
+    'aus': 'Australia', 'australia': 'Australia', 'nz': 'New Zealand',
+    'sg': 'Singapore', 'hk': 'Hong Kong', 'pak': 'Pakistan',
+  };
+
+  const locationSuggestion = LOCATION_ALIASES[location.toLowerCase().trim()] || null;
+
   const handleScout = async () => {
     if (!jd.trim()) return;
     setStatus('loading');
@@ -164,7 +176,7 @@ export default function Home() {
   const filteredCandidates = results?.candidates.filter(c => {
     if (filterScore > 0 && (c.scores?.overall_score || 0) < filterScore) return false;
     if (filterLang && !c.topLanguages.includes(filterLang)) return false;
-    if (filterExp !== 'any' && c.scores?.seniority_estimate !== filterExp) return false;
+    if (filterExp !== 'any' && c.scores?.seniority_estimate !== filterExp && c.scores?.seniority_estimate !== undefined) return false;
     return true;
   }) || [];
 
@@ -248,9 +260,18 @@ export default function Home() {
                   <input
                     value={location}
                     onChange={e => setLocation(e.target.value)}
-                    placeholder="e.g. India, Berlin, Remote"
+                    placeholder="e.g. United States, India, Berlin"
                     style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', padding: '10px 14px', fontSize: '13px', color: 'white', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
                   />
+                {locationSuggestion && locationSuggestion !== location && (
+                    <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)' }}>Did you mean:</span>
+                      <button onClick={() => setLocation(locationSuggestion)}
+                        style={{ background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)', color: '#818cf8', fontSize: '12px', fontWeight: 600, padding: '3px 12px', borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit' }}>
+                        {locationSuggestion}
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em', marginBottom: '8px' }}>EXPERIENCE LEVEL</label>

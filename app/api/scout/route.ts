@@ -19,13 +19,15 @@ async function parseJobDescription(jd: string) {
 
 async function searchGitHubCandidates(requirements: any, count: number, location?: string) {
   const languages = requirements.languages?.slice(0, 2) || ['javascript'];
-  const locationQuery = location ? ` location:${location}` : '';
+  const loc = location?.trim();
+  const locationQuery = loc ? ` location:"${loc}"` : '';
 
   const queries = [
-    `language:${languages[0]} followers:>50${locationQuery}`,
-    `language:${languages[0]} followers:>20 repos:>10${locationQuery}`,
-    languages[1] ? `language:${languages[1]} followers:>30${locationQuery}` : `language:${languages[0]} followers:>10${locationQuery}`,
-    requirements.keywords?.[0] ? `${requirements.keywords[0]} in:bio followers:>10${locationQuery}` : `language:${languages[0]} repos:>20${locationQuery}`,
+    `language:${languages[0]} followers:>100${locationQuery}`,
+    `language:${languages[0]} followers:>50 repos:>15${locationQuery}`,
+    languages[1] ? `language:${languages[1]} followers:>50${locationQuery}` : `language:${languages[0]} followers:>30${locationQuery}`,
+    `language:javascript followers:>80${locationQuery}`,
+    requirements.keywords?.[0] ? `${requirements.keywords[0]} in:bio followers:>30${locationQuery}` : `language:${languages[0]} repos:>25${locationQuery}`,
   ];
 
   const users = new Map();
@@ -41,7 +43,7 @@ async function searchGitHubCandidates(requirements: any, count: number, location
         if (!users.has(user.login)) users.set(user.login, user);
       }
     } catch {}
-    if (users.size >= count * 5) break;
+    if (users.size >= count * 6) break;
   }
   return Array.from(users.values());
 }
@@ -110,7 +112,7 @@ async function scoreCandidate(candidate: any, requirements: any) {
     const res = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       messages: [
-        { role: 'system', content: 'You are an expert technical recruiter. Score candidates objectively and critically. Do not give high scores unless clearly justified. Respond ONLY with valid JSON.' },
+        { role: 'system', content: 'You are a senior technical recruiter at a top tech company. Score GitHub developers fairly and generously — a developer with strong relevant projects and good activity should score 70-90. Reserve scores below 50 for genuinely poor fits. Be specific in your reasoning. Respond ONLY with valid JSON.' },
         { role: 'user', content: `Score this GitHub developer for: ${requirements.role}\n\nRequired skills: ${requirements.skills?.join(', ')}\nRequired languages: ${requirements.languages?.join(', ')}\nExperience level needed: ${requirements.experience_level}\n\nCandidate Profile:\nName: ${candidate.name}\nBio: ${candidate.bio}\nLocation: ${candidate.location}\nLanguages used: ${candidate.topLanguages.join(', ')}\nFollowers: ${candidate.followers}\nPublic Repos: ${candidate.public_repos}\nTotal Stars: ${candidate.totalStars}\nYears on GitHub: ${candidate.yearsOnGitHub}\nTop Projects: ${candidate.topRepos.map((r: any) => `${r.name}(${r.stars}⭐, ${r.forks} forks): ${r.description}`).join(' | ')}\n\nReturn ONLY this JSON:\n{\n  "technical_fit": 0-100,\n  "technical_reasoning": "one specific sentence citing their actual repos/languages",\n  "activity_score": 0-100,\n  "activity_reasoning": "one sentence about their GitHub activity patterns",\n  "project_quality": 0-100,\n  "quality_reasoning": "one sentence about their best projects specifically",\n  "presence_score": 0-100,\n  "presence_reasoning": "one sentence about their community presence",\n  "overall_score": 0-100,\n  "verdict": "2 sentence honest assessment for a recruiter",\n  "strengths": ["specific strength 1","specific strength 2","specific strength 3"],\n  "concerns": ["specific concern 1"],\n  "seniority_estimate": "junior|mid|senior|principal",\n  "hire_recommendation": "strong_yes|yes|maybe|no"\n}` }
       ],
       temperature: 0.2,
