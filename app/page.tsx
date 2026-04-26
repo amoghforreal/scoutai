@@ -159,10 +159,8 @@ function Sun() {
 }
 
 export default function Home() {
-  const [dark, setDark] = useState(true);
+  const [dark, setDark] = useState(false);
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-  if (!mounted) return null;
   const [jd, setJd] = useState('');
   const [location, setLocation] = useState('');
   const [count, setCount] = useState(5);
@@ -181,11 +179,13 @@ export default function Home() {
   const locationSuggestion = LOCATION_ALIASES[location.toLowerCase().trim()] || null;
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
+    setMounted(true);
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
+  if (!mounted) return null;
 
   const bg = dark ? '#050a07' : '#ece6d8';
   const surface = dark ? '#0a1510' : '#f5f0e5';

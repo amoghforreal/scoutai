@@ -109,25 +109,26 @@ async function getCandidateDetails(username: string) {
 }
 
 async function scoreCandidate(candidate: any, requirements: any) {
-  try {
-    const res = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
-      messages: [
-        { role: 'system', content: 'You are a senior technical recruiter at a top tech company. Score GitHub developers fairly and generously — a developer with strong relevant projects and good activity should score 70-90. Reserve scores below 50 for genuinely poor fits. Be specific in your reasoning. Respond ONLY with valid JSON.' },
-        { role: 'user', content: `Score this GitHub developer for: ${requirements.role}\n\nRequired skills: ${requirements.skills?.join(', ')}\nRequired languages: ${requirements.languages?.join(', ')}\nExperience level needed: ${requirements.experience_level}\n\nCandidate Profile:\nName: ${candidate.name}\nBio: ${candidate.bio}\nLocation: ${candidate.location}\nLanguages used: ${candidate.topLanguages.join(', ')}\nFollowers: ${candidate.followers}\nPublic Repos: ${candidate.public_repos}\nTotal Stars: ${candidate.totalStars}\nYears on GitHub: ${candidate.yearsOnGitHub}\nTop Projects: ${candidate.topRepos.map((r: any) => `${r.name}(${r.stars}⭐, ${r.forks} forks): ${r.description}`).join(' | ')}\n\nReturn ONLY this JSON:\n{\n  "technical_fit": 0-100,\n  "technical_reasoning": "one specific sentence citing their actual repos/languages",\n  "activity_score": 0-100,\n  "activity_reasoning": "one sentence about their GitHub activity patterns",\n  "project_quality": 0-100,\n  "quality_reasoning": "one sentence about their best projects specifically",\n  "presence_score": 0-100,\n  "presence_reasoning": "one sentence about their community presence",\n  "overall_score": 0-100,\n  "verdict": "2 sentence honest assessment for a recruiter",\n  "strengths": ["specific strength 1","specific strength 2","specific strength 3"],\n  "concerns": ["specific concern 1"],\n  "seniority_estimate": "junior|mid|senior|principal",\n  "hire_recommendation": "strong_yes|yes|maybe|no"\n}` }
-      ],
-      temperature: 0.2,
-    });
-    const text = res.choices[0].message.content || '{}';
-    return JSON.parse(text.replace(/```json|```/g, '').trim());
-  } catch {
-    return {
-      technical_fit: 50, activity_score: 50, project_quality: 50, presence_score: 50,
-      overall_score: 50, verdict: 'Scoring unavailable.', strengths: [], concerns: [],
-      technical_reasoning: '', activity_reasoning: '', quality_reasoning: '', presence_reasoning: '',
-      seniority_estimate: 'mid', hire_recommendation: 'maybe'
-    };
+  const models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'gemma2-9b-it'];
+  for (const model of models) {
+    try {
+      const res = await groq.chat.completions.create({
+        model,
+        messages: [
+          { role: 'system', content: 'You are a senior technical recruiter. Score GitHub developers. Respond ONLY with valid JSON, no markdown.' },
+          { role: 'user', content: `Score this developer for: ${requirements.role}\nRequired: ${requirements.skills?.join(', ')}\nLanguages needed: ${requirements.languages?.join(', ')}\n\nCandidate: ${candidate.name}\nBio: ${candidate.bio}\nLanguages: ${candidate.topLanguages.join(', ')}\nFollowers: ${candidate.followers}, Repos: ${candidate.public_repos}, Stars: ${candidate.totalStars}, Years: ${candidate.yearsOnGitHub}\nProjects: ${candidate.topRepos.map((r: any) => `${r.name}(${r.stars}⭐): ${r.description}`).join(' | ')}\n\nReturn ONLY this JSON:\n{"technical_fit":0-100,"technical_reasoning":"sentence","activity_score":0-100,"activity_reasoning":"sentence","project_quality":0-100,"quality_reasoning":"sentence","presence_score":0-100,"presence_reasoning":"sentence","overall_score":0-100,"verdict":"2 sentences","strengths":["s1","s2","s3"],"concerns":["c1"],"seniority_estimate":"junior|mid|senior|principal","hire_recommendation":"strong_yes|yes|maybe|no"}` }
+        ],
+        temperature: 0.2,
+        max_tokens: 600,
+      });
+      const text = res.choices[0].message.content || '{}';
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch (e: any) {
+      if (e?.status === 429) { await new Promise(r => setTimeout(r, 2000)); continue; }
+      break;
+    }
   }
+  return { technical_fit: 50, activity_score: 50, project_quality: 50, presence_score: 50, overall_score: 50, verdict: 'Scoring unavailable.', strengths: [], concerns: [], technical_reasoning: '', activity_reasoning: '', quality_reasoning: '', presence_reasoning: '', seniority_estimate: 'mid', hire_recommendation: 'maybe' };
 }
 
 async function generateEmail(candidate: any, requirements: any, scores: any) {
@@ -165,13 +166,13 @@ export async function POST(req: NextRequest) {
     });
 
     // Score more than needed, then pick the best
-    const toScore = preFiltered.slice(0, Math.min(count + 8, preFiltered.length));
+    const toScore = preFiltered.slice(0, Math.min(count, preFiltered.length));
     const scoredCandidates = [];
     for (const candidate of toScore) {
       const scores = await scoreCandidate(candidate, requirements);
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 1500));
       const email = await generateEmail(candidate, requirements, scores);
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise(r => setTimeout(r, 1000));
       scoredCandidates.push({ ...candidate, scores, email });
     }
     scoredCandidates.sort((a, b) => (b.scores?.overall_score || 0) - (a.scores?.overall_score || 0));
