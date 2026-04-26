@@ -19,7 +19,7 @@ async function parseJobDescription(jd: string) {
 
 async function searchGitHubCandidates(requirements: any, count: number, location?: string) {
   const languages = requirements.languages?.slice(0, 2) || ['javascript'];
-  const locationQuery = location ? ` location:"${location}"` : '';
+  const locationQuery = location ? ` location:${location}` : '';
   
   const queries = [
     `type:user language:${languages[0]} followers:>100${locationQuery}`,
@@ -150,7 +150,7 @@ export async function POST(req: NextRequest) {
 
     const requirements = await parseJobDescription(jobDescription);
     const rawCandidates = await searchGitHubCandidates(requirements, count, location);
-    const detailPromises = rawCandidates.slice(0, count + 8).map(u => getCandidateDetails(u.login));
+    const detailPromises = rawCandidates.slice(0, count + 15).map(u => getCandidateDetails(u.login));
     const details = (await Promise.all(detailPromises)).filter(Boolean).filter((c: any) => c.type !== 'Organization');
 
     const scoredCandidates = [];
