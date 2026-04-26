@@ -14,8 +14,10 @@ async function parseJobDescription(jd: string) {
     temperature: 0.1,
   });
   const text = res.choices[0].message.content || '{}';
-  try { return JSON.parse(text.replace(/```json|```/g, '').trim()); }
-  catch { return { role: 'Software Engineer', skills: [], languages: ['javascript'], experience_level: 'mid', keywords: [], description: jd.slice(0, 100) }; }
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    return jsonMatch ? JSON.parse(jsonMatch[0]) : { role: 'Software Engineer', skills: [], languages: ['javascript'], experience_level: 'mid', keywords: [], description: jd.slice(0, 100) };
+  } catch { return { role: 'Software Engineer', skills: [], languages: ['javascript'], experience_level: 'mid', keywords: [], description: jd.slice(0, 100) }; }
 }
 
 async function searchGitHubCandidates(requirements: any, count: number, location?: string) {
@@ -122,10 +124,13 @@ async function scoreCandidate(candidate: any, requirements: any) {
         max_tokens: 600,
       });
       const text = res.choices[0].message.content || '{}';
-      return JSON.parse(text.replace(/```json|```/g, '').trim());
+      const cleaned = text.replace(/```json|```/g, '').trim();
+      const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) { await new Promise(r => setTimeout(r, 1000)); continue; }
+      return JSON.parse(jsonMatch[0]);
     } catch (e: any) {
       if (e?.status === 429) { await new Promise(r => setTimeout(r, 2000)); continue; }
-      break;
+      continue;
     }
   }
   return { technical_fit: 50, activity_score: 50, project_quality: 50, presence_score: 50, overall_score: 50, verdict: 'Scoring unavailable.', strengths: [], concerns: [], technical_reasoning: '', activity_reasoning: '', quality_reasoning: '', presence_reasoning: '', seniority_estimate: 'mid', hire_recommendation: 'maybe' };
