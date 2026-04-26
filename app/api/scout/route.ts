@@ -189,6 +189,13 @@ export async function POST(req: NextRequest) {
       location: location || 'Global',
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const msg = error.message || '';
+    if (msg.includes('429') || msg.includes('rate_limit') || msg.includes('Rate limit')) {
+      return NextResponse.json({ error: 'The agent is taking a short break due to high demand. Please wait 2 minutes and try again.' }, { status: 429 });
+    }
+    if (msg.includes('401') || msg.includes('invalid_api_key')) {
+      return NextResponse.json({ error: 'Configuration error. Please contact support.' }, { status: 500 });
+    }
+    return NextResponse.json({ error: 'Something went wrong. Please try again in a moment.' }, { status: 500 });
   }
 }
