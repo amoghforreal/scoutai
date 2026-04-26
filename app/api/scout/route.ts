@@ -174,7 +174,6 @@ export async function POST(req: NextRequest) {
       await new Promise(r => setTimeout(r, 300));
       scoredCandidates.push({ ...candidate, scores, email });
     }
-
     scoredCandidates.sort((a, b) => (b.scores?.overall_score || 0) - (a.scores?.overall_score || 0));
 
     return NextResponse.json({
