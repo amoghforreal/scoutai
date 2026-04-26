@@ -196,19 +196,19 @@ export default function Home() {
   if (!mounted) return null;
 
   const bg = dark ? '#050a07' : '#ece6d8';
-  const surface = dark ? '#0a1510' : '#f5f0e5';
-  const cardBg = dark ? 'linear-gradient(145deg,#0d1a13,#091309)' : 'linear-gradient(145deg,#faf7f0,#f3ede0)';
-  const cardBorder = dark ? 'rgba(196,155,70,0.1)' : 'rgba(101,67,20,0.12)';
-  const accent = dark ? '#c49b46' : '#6b3f12';
-  const accentGlow = dark ? 'rgba(196,155,70,0.18)' : 'rgba(107,63,18,0.12)';
-  const forestGreen = dark ? '#3d8b5e' : '#2d6a45';
-  const textMain = dark ? '#dde8df' : '#1a0f05';
-  const textDim = dark ? 'rgba(221,232,223,0.42)' : 'rgba(26,15,5,0.5)';
-  const textFaint = dark ? 'rgba(221,232,223,0.22)' : 'rgba(26,15,5,0.28)';
-  const borderFaint = dark ? 'rgba(196,155,70,0.08)' : 'rgba(101,67,20,0.1)';
-  const inputBg = dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)';
-  const inputBorder = dark ? 'rgba(196,155,70,0.12)' : 'rgba(101,67,20,0.14)';
-  const tagBg = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+  const surface = dark ? '#0f1f16' : '#f5f0e5';
+  const cardBg = dark ? 'linear-gradient(145deg,#152318,#0f1c12)' : 'linear-gradient(145deg,#faf7f0,#f3ede0)';
+  const cardBorder = dark ? 'rgba(196,155,70,0.22)' : 'rgba(101,67,20,0.12)';
+  const accent = dark ? '#d4aa55' : '#6b3f12';
+  const accentGlow = dark ? 'rgba(212,170,85,0.22)' : 'rgba(107,63,18,0.12)';
+  const forestGreen = dark ? '#4caf7d' : '#2d6a45';
+  const textMain = dark ? '#eaf2ec' : '#1a0f05';
+  const textDim = dark ? 'rgba(234,242,236,0.72)' : 'rgba(26,15,5,0.5)';
+  const textFaint = dark ? 'rgba(234,242,236,0.45)' : 'rgba(26,15,5,0.28)';
+  const borderFaint = dark ? 'rgba(196,155,70,0.18)' : 'rgba(101,67,20,0.1)';
+  const inputBg = dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.04)';
+  const inputBorder = dark ? 'rgba(196,155,70,0.25)' : 'rgba(101,67,20,0.14)';
+  const tagBg = dark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.05)';
 
   const handleScout = async () => {
     if (!jd.trim()) return;
@@ -397,7 +397,7 @@ export default function Home() {
       </div>
 
       {/* ── HEADER ── */}
-      <header style={{ borderBottom: `1px solid ${borderFaint}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, background: dark ? 'rgba(5,10,7,0.92)' : 'rgba(236,230,216,0.92)', backdropFilter: 'blur(20px)', transition: 'background 0.4s' }}>
+      <header style={{ borderBottom: `1px solid ${borderFaint}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, background: dark ? 'rgba(8,18,10,0.96)' : 'rgba(236,230,216,0.92)', backdropFilter: 'blur(20px)', transition: 'background 0.4s' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 28px', height: '62px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{ width: '34px', height: '34px', background: `linear-gradient(135deg, ${accent}, ${dark ? '#8b6820' : '#4a2a0a'})`, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 800, boxShadow: `0 0 18px ${accentGlow}`, fontFamily: "'Playfair Display', serif", color: dark ? '#050a07' : 'white' }}>S</div>
@@ -603,7 +603,7 @@ export default function Home() {
                 const score = c.scores?.overall_score || 0;
                 const medal = rankMedal(idx);
                 return (
-                  <div key={c.username} style={{ background: cardBg, border: `1px solid ${idx === 0 ? dark ? 'rgba(196,155,70,0.25)' : 'rgba(101,67,20,0.2)' : cardBorder}`, borderRadius: '4px', overflow: 'hidden', boxShadow: idx === 0 ? `0 0 40px ${accentGlow}, 0 4px 20px rgba(0,0,0,0.2)` : '0 4px 20px rgba(0,0,0,0.12)', transition: 'box-shadow 0.3s' }}>
+                  <div key={c.username} style={{ background: cardBg, border: `1px solid ${idx === 0 ? dark ? 'rgba(196,155,70,0.25)' : 'rgba(101,67,20,0.2)' : cardBorder}`, borderRadius: '4px', overflow: 'hidden', boxShadow: idx === 0 ? `0 0 40px ${accentGlow}, 0 4px 30px rgba(0,0,0,0.5)` : dark ? '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)' : '0 4px 20px rgba(0,0,0,0.08)', transition: 'box-shadow 0.3s' }}>
                     {/* Top accent line for #1 */}
                     {idx === 0 && <div style={{ height: '2px', background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />}
                     <div style={{ padding: isMobile ? '16px 14px' : '24px 28px' }}>
