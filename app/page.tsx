@@ -112,29 +112,37 @@ function exportToCSV(candidates: Candidate[], role: string) {
 
 // SVG Tree Component
 function PineTrees({ side, dark }: { side: 'left' | 'right'; dark: boolean }) {
-  const treeColor = dark ? '#020805' : '#2a4a2a';
-  const treeMidColor = dark ? '#040e07' : '#1d3d1d';
-  const flip = side === 'right' ? 'scale(-1,1) translate(-180,0)' : '';
+  const treeColor = dark ? '#020805' : '#2d4f2d';
+  const treeMidColor = dark ? '#040e07' : '#1e3d1e';
+  const groundColor = dark ? '#020805' : '#3a5c2a';
+  const flip = side === 'right' ? `scale(-1,1) translate(-200,0)` : '';
   return (
-    <svg viewBox="0 0 180 600" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', ...(side === 'left' ? { left: 0 } : { right: 0 }), bottom: 0, height: '80vh', width: 'auto', opacity: dark ? 0.95 : 0.55, pointerEvents: 'none', zIndex: 0 }} preserveAspectRatio="xMinYMax meet">
+    <svg viewBox="0 0 200 620" xmlns="http://www.w3.org/2000/svg"
+      style={{ position: 'absolute', ...(side === 'left' ? { left: 0 } : { right: 0 }), bottom: 0, height: '85vh', width: 'auto', opacity: dark ? 0.97 : 0.6, pointerEvents: 'none', zIndex: 0 }}
+      preserveAspectRatio={side === 'left' ? 'xMinYMax meet' : 'xMaxYMax meet'}>
       <g transform={flip}>
-        {/* Far tree */}
-        <g transform="translate(0,0)" opacity="0.7">
-          <polygon points="30,120 5,220 15,220 2,310 14,310 0,400 60,400 46,310 58,310 45,220 55,220" fill={treeColor}/>
-          <rect x="24" y="400" width="12" height="80" fill={treeColor}/>
+        {/* Ground strip — connects everything */}
+        <rect x="0" y="560" width="200" height="60" fill={groundColor} opacity={dark ? 1 : 0.55}/>
+        {/* Back far small tree */}
+        <g opacity="0.6">
+          <polygon points="20,180 2,260 10,260 0,330 12,330 2,400 38,400 28,330 40,330 30,260 38,260" fill={treeColor}/>
+          <rect x="15" y="400" width="10" height="160" fill={treeColor}/>
         </g>
-        {/* Near tall tree */}
-        <g transform="translate(60,0)">
-          <polygon points="35,60 5,180 18,180 2,280 16,280 0,390 70,390 54,280 68,280 52,180 65,180" fill={treeMidColor}/>
-          <rect x="27" y="390" width="16" height="80" fill={treeMidColor}/>
+        {/* Main tall center-left tree */}
+        <g transform="translate(55,0)">
+          <polygon points="30,40 2,160 16,160 0,270 14,270 -4,390 64,390 46,270 60,270 44,160 58,160" fill={treeMidColor}/>
+          <rect x="22" y="390" width="16" height="170" fill={treeMidColor}/>
         </g>
-        {/* Short front tree */}
-        <g transform="translate(110,150)" opacity="0.9">
-          <polygon points="30,0 4,100 14,100 2,180 58,180 46,100 56,100" fill={treeColor}/>
-          <rect x="24" y="180" width="12" height="60" fill={treeColor}/>
+        {/* Front shorter tree */}
+        <g transform="translate(105,120)">
+          <polygon points="30,0 4,100 16,100 2,190 8,190 -6,300 66,300 52,190 58,190 44,100 56,100" fill={treeColor}/>
+          <rect x="23" y="300" width="14" height="140" fill={treeColor}/>
         </g>
-        {/* Ground */}
-        <rect x="0" y="480" width="180" height="120" fill={dark ? '#020805' : '#2a4a2a'} opacity={dark ? 1 : 0.5}/>
+        {/* Tiny accent tree far back */}
+        <g transform="translate(155,200)" opacity="0.5">
+          <polygon points="20,0 2,70 10,70 0,130 40,130 30,70 38,70" fill={treeColor}/>
+          <rect x="15" y="130" width="10" height="90" fill={treeColor}/>
+        </g>
       </g>
     </svg>
   );
@@ -312,16 +320,61 @@ export default function Home() {
           <circle cx="24" cy="10" r="2" fill="#020805"/>
         </svg>}
 
-        {/* Birds (light only) */}
-        {!dark && <svg viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '15%', left: '-120px', width: '80px', opacity: 0.35, animation: 'bird 18s 2s infinite linear', pointerEvents: 'none' }}>
-          <path d="M10,15 Q15,8 20,15" stroke="#2a4a2a" strokeWidth="1.5" fill="none"/>
-          <path d="M25,12 Q30,5 35,12" stroke="#2a4a2a" strokeWidth="1.5" fill="none"/>
-          <path d="M45,17 Q50,10 55,17" stroke="#2a4a2a" strokeWidth="1.5" fill="none"/>
+        {/* Birds flock 1 — large, slow */}
+        {!dark && <svg viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '13%', left: '-160px', width: '110px', opacity: 0.4, animation: 'bird 22s 1s infinite linear', pointerEvents: 'none' }}>
+          <path d="M10,20 Q17,10 24,20" stroke="#2a4a2a" strokeWidth="2" fill="none" strokeLinecap="round"/>
+          <path d="M32,16 Q39,6 46,16" stroke="#2a4a2a" strokeWidth="2" fill="none" strokeLinecap="round"/>
+          <path d="M58,21 Q65,11 72,21" stroke="#2a4a2a" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+          <path d="M80,14 Q86,6 92,14" stroke="#2a4a2a" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+          <path d="M100,22 Q106,14 112,22" stroke="#2a4a2a" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
         </svg>}
-        {!dark && <svg viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '20%', left: '-120px', width: '50px', opacity: 0.25, animation: 'bird 25s 8s infinite linear', pointerEvents: 'none' }}>
-          <path d="M10,15 Q15,8 20,15" stroke="#2a4a2a" strokeWidth="1.5" fill="none"/>
-          <path d="M28,12 Q33,5 38,12" stroke="#2a4a2a" strokeWidth="1.5" fill="none"/>
+        {/* Birds flock 2 — small, fast, higher */}
+        {!dark && <svg viewBox="0 0 80 30" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '7%', left: '-100px', width: '60px', opacity: 0.28, animation: 'bird 14s 4s infinite linear', pointerEvents: 'none' }}>
+          <path d="M8,15 Q13,8 18,15" stroke="#3a5a3a" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+          <path d="M24,12 Q29,5 34,12" stroke="#3a5a3a" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+          <path d="M42,17 Q47,10 52,17" stroke="#3a5a3a" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
         </svg>}
+        {/* Birds flock 3 — medium, mid height */}
+        {!dark && <svg viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '22%', left: '-130px', width: '75px', opacity: 0.22, animation: 'bird 30s 10s infinite linear', pointerEvents: 'none' }}>
+          <path d="M10,15 Q16,7 22,15" stroke="#2a4a2a" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+          <path d="M30,18 Q36,10 42,18" stroke="#2a4a2a" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+          <path d="M55,13 Q60,6 65,13" stroke="#2a4a2a" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+          <path d="M72,17 Q77,10 82,17" stroke="#2a4a2a" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+        </svg>}
+        {/* Solo bird — lone wanderer */}
+        {!dark && <svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '30%', left: '-50px', width: '35px', opacity: 0.3, animation: 'bird 19s 16s infinite linear', pointerEvents: 'none' }}>
+          <path d="M4,10 Q10,3 16,10" stroke="#2a4a2a" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        </svg>}
+        {/* Butterflies (light only) */}
+        {!dark && [
+          { top: '35%', left: '18%', color: '#e07840', delay: '0s', dur: '6s' },
+          { top: '45%', left: '25%', color: '#c0a020', delay: '2s', dur: '8s' },
+          { top: '28%', left: '75%', color: '#d06080', delay: '4s', dur: '7s' },
+          { top: '55%', left: '80%', color: '#5090c0', delay: '1s', dur: '9s' },
+        ].map((b, i) => (
+          <div key={i} style={{ position: 'absolute', top: b.top, left: b.left, animation: `float ${b.dur} ${b.delay} infinite ease-in-out`, pointerEvents: 'none', opacity: 0.5 }}>
+            <svg viewBox="0 0 20 16" width="14" height="11">
+              <ellipse cx="5" cy="6" rx="5" ry="4" fill={b.color} opacity="0.7" transform="rotate(-20,5,6)"/>
+              <ellipse cx="15" cy="6" rx="5" ry="4" fill={b.color} opacity="0.7" transform="rotate(20,15,6)"/>
+              <ellipse cx="5" cy="11" rx="3.5" ry="3" fill={b.color} opacity="0.5" transform="rotate(15,5,11)"/>
+              <ellipse cx="15" cy="11" rx="3.5" ry="3" fill={b.color} opacity="0.5" transform="rotate(-15,15,11)"/>
+              <line x1="10" y1="2" x2="10" y2="14" stroke="#333" strokeWidth="0.8"/>
+            </svg>
+          </div>
+        ))}
+        {/* Floating leaves (light only) */}
+        {!dark && [
+          { top: '40%', left: '30%', delay: '0s', dur: '10s', rotate: '20deg' },
+          { top: '60%', left: '65%', delay: '3s', dur: '12s', rotate: '-15deg' },
+          { top: '25%', left: '60%', delay: '6s', dur: '8s', rotate: '35deg' },
+        ].map((l, i) => (
+          <div key={i} style={{ position: 'absolute', top: l.top, left: l.left, animation: `float ${l.dur} ${l.delay} infinite ease-in-out`, transform: `rotate(${l.rotate})`, pointerEvents: 'none', opacity: 0.25 }}>
+            <svg viewBox="0 0 20 28" width="12" height="16">
+              <path d="M10,2 Q18,8 16,18 Q12,26 10,26 Q8,26 4,18 Q2,8 10,2Z" fill="#4a7a3a"/>
+              <line x1="10" y1="4" x2="10" y2="24" stroke="#3a6a2a" strokeWidth="0.8"/>
+            </svg>
+          </div>
+        ))}
 
         {/* Trees */}
         {!isMobile && <PineTrees side="left" dark={dark} />}
