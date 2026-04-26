@@ -160,7 +160,7 @@ export async function POST(req: NextRequest) {
     const preFiltered = details.filter((c: any) => {
       if (requiredLangs.length === 0) return true;
       const candidateLangs = (c.topLanguages || []).map((l: string) => l.toLowerCase());
-      return requiredLangs.some((l: string) => candidateLangs.includes(l)) || candidateLangs.includes('javascript') || candidateLangs.includes('typescript');
+      return requiredLangs.some((l: string) => candidateLangs.includes(l)) || candidateLangs.includes('javascript') || candidateLangs.includes('typescript') || candidateLangs.includes('css') || candidateLangs.includes('html');
     });
 
     // Score more than needed, then pick the best
