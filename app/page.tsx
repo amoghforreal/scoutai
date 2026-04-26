@@ -160,6 +160,9 @@ function Sun() {
 
 export default function Home() {
   const [dark, setDark] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return null;
   const [jd, setJd] = useState('');
   const [location, setLocation] = useState('');
   const [count, setCount] = useState(5);
@@ -231,7 +234,7 @@ export default function Home() {
   const scoreColor = (n: number) => n >= 80 ? '#4caf7d' : n >= 60 ? '#c49b46' : '#c0504a';
 
   return (
-    <div style={{ minHeight: '100vh', background: bg, color: textMain, fontFamily: "'DM Sans', system-ui, sans-serif", transition: 'background 0.4s, color 0.3s', overflowX: 'hidden' }}>
+    <div suppressHydrationWarning style={{ minHeight: '100vh', background: bg, color: textMain, fontFamily: "'DM Sans', system-ui, sans-serif", transition: 'background 0.4s, color 0.3s', overflowX: 'hidden' }}>
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
