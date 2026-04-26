@@ -20,12 +20,12 @@ async function parseJobDescription(jd: string) {
 async function searchGitHubCandidates(requirements: any, count: number, location?: string) {
   const languages = requirements.languages?.slice(0, 2) || ['javascript'];
   const locationQuery = location ? ` location:${location}` : '';
-  
+
   const queries = [
-    `type:user language:${languages[0]} followers:>100${locationQuery}`,
-    `type:user language:${languages[0]} repos:>20 followers:>30${locationQuery}`,
-    languages[1] ? `type:user language:${languages[1]} followers:>50${locationQuery}` : `type:user language:${languages[0]} followers:>20${locationQuery}`,
-    requirements.keywords?.[0] ? `type:user ${requirements.keywords[0]} in:bio followers:>20${locationQuery}` : `type:user language:${languages[0]} repos:>15${locationQuery}`,
+    `language:${languages[0]} followers:>50${locationQuery}`,
+    `language:${languages[0]} followers:>20 repos:>10${locationQuery}`,
+    languages[1] ? `language:${languages[1]} followers:>30${locationQuery}` : `language:${languages[0]} followers:>10${locationQuery}`,
+    requirements.keywords?.[0] ? `${requirements.keywords[0]} in:bio followers:>10${locationQuery}` : `language:${languages[0]} repos:>20${locationQuery}`,
   ];
 
   const users = new Map();
@@ -41,7 +41,7 @@ async function searchGitHubCandidates(requirements: any, count: number, location
         if (!users.has(user.login)) users.set(user.login, user);
       }
     } catch {}
-    if (users.size >= count * 4) break;
+    if (users.size >= count * 5) break;
   }
   return Array.from(users.values());
 }
