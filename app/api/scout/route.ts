@@ -33,7 +33,7 @@ async function searchGitHubCandidates(requirements: any, count: number, location
     try {
       const res = await fetch(
         `https://api.github.com/search/users?q=${encodeURIComponent(query)}&sort=followers&per_page=20`,
-        { headers: { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'ScoutAI-Agent' } }
+        { headers: { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'ScoutAI-Agent', 'Authorization': `token ${process.env.GITHUB_TOKEN}` } }
       );
       if (!res.ok) continue;
       const data = await res.json();
@@ -50,10 +50,10 @@ async function getCandidateDetails(username: string) {
   try {
     const [profileRes, reposRes] = await Promise.all([
       fetch(`https://api.github.com/users/${username}`, {
-        headers: { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'ScoutAI-Agent' }
+        headers: { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'ScoutAI-Agent', 'Authorization': `token ${process.env.GITHUB_TOKEN}` }
       }),
       fetch(`https://api.github.com/users/${username}/repos?sort=stars&per_page=8`, {
-        headers: { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'ScoutAI-Agent' }
+        headers: { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'ScoutAI-Agent', 'Authorization': `token ${process.env.GITHUB_TOKEN}` }
       })
     ]);
     if (!profileRes.ok) return null;
