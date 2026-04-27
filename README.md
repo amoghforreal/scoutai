@@ -17,7 +17,7 @@ No templates. No manual filtering. One input, end-to-end output.
 
 ## Demo Video
 
-https://drive.google.com/file/d/1_GOZJqn18p5CWz_Nm7jlDzHaTfbEh-eF/view?usp=drivesdk ← replace with your video link
+https://drive.google.com/file/d/1_GOZJqn18p5CWz_Nm7jlDzHaTfbEh-eF/view?usp=drivesdk
 
 ---
 
